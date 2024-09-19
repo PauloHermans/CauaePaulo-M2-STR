@@ -9,6 +9,6 @@ O relatório completo do projeto está disponível em: https://docs.google.com/d
 
 # Instruções de Compilação
 
-A implementação foi feita utilizando a IDE Visual Studio Code. Também foi necessária a instalação de drivers USB-para-UART, neste caso, o driver CP210x VCP para windows, para fazer o processo e flash para a ESP32<br>
-Após a instalação dos componentes necessários, abra o VSCode e instale as extenções C/C++ e ESP-IDF, clique em View, clique em Command Palette e procure por ESP-IDF: Show Examples Projects.
-
+A implementação foi feita utilizando a IDE Visual Studio Code. Também foi necessária a instalação de drivers USB-para-UART e neste caso, foi instalado o driver CP210x VCP para windows, este passo possibilita fazer o processo de flash com a placa ESP32.<br><br>
+Após a instalação dos componentes necessários, abra o VSCode e instale as extenções C/C++ e ESP-IDF, clique em View, clique em Command Palette e procure por ESP-IDF: Show Examples Projects.<br><br>
+Escolha um projeto exemplo, verifique a porta de conexão da ESP e seus drivers, copie o código da aplicação para o arquivo main e clique em ESP-IDF: Build, Flash and Monitor.
