@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "driver/touch_pad.h"
+#include "esp_log.h"
+
+#define TOUCH_PAD_NO_CHANGE   (-1)
+#define TOUCH_THRESH_NO_USE   (0)
+#define TOUCH_FILTER_MODE_EN  (0)
+#define TOUCHPAD_FILTER_TOUCH_PERIOD (10)
+#define TOUCH_THRESHOLD 100
+#define RESPONSE_TIME_MS 100
+#define SEATBELT_CHECK_INTERVAL_MS 999
+
+static bool touch_detected = false;  // Variável para monitorar se o touch foi ativado
+
+static void tp_seatbelt(void *pvParameter)
+{
+    uint16_t touch_value;
+
+#if TOUCH_FILTER_MODE_EN
+    printf("Touch Sensor filter mode read, the output format is: \nTouchpad num:[raw data, filtered data]\n\n");
+#else
+    printf("Touch Sensor normal mode read, the output format is: \nTouchpad num:[raw data]\n\n");
+#endif
+    while (1) {
+        // Ler o valor do pino touch 0
+        touch_pad_read(0, &touch_value);
+        printf("T0:[%4d] ", touch_value);
+
+        // Verificar se o valor de toque está abaixo do limite
+        if (touch_value < TOUCH_THRESHOLD) {
+            printf("\nCinto de Segurança Ativado");
+            touch_detected = true;  // O toque foi detectado
+            // Esperar 100ms para garantir a resposta dentro do tempo limite
+            vTaskDelay(RESPONSE_TIME_MS / portTICK_PERIOD_MS);
+        }
+
+        vTaskDelay(200 / portTICK_PERIOD_MS);  // Pequeno atraso para leitura constante
+    }
+}
+
+static void seatbelt_check_task(void *pvParameter)
+{
+    while (1) {
+        if (!touch_detected) {
+            printf("\nSem Cinto de Segurança\n");
+        }
+        // Resetar a variável para monitorar o próximo toque
+        touch_detected = false;
+
+        // Esperar 1 segundo antes da próxima verificação
+        vTaskDelay(SEATBELT_CHECK_INTERVAL_MS / portTICK_PERIOD_MS);
+    }
+}
+
+static void tp_seatbelt_init(void)
+{
+    for (int i = 0; i < TOUCH_PAD_MAX; i++) {
+        touch_pad_config(i, TOUCH_THRESH_NO_USE);
+    }
+}
+
+void app_main(void)
+{
+    // Inicializar o periférico touch pad
+    touch_pad_init();
+    // Definir voltagem de referência
+    touch_pad_set_voltage(TOUCH_HVOLT_2V7, TOUCH_LVOLT_0V5, TOUCH_HVOLT_ATTEN_1V);
+    tp_seatbelt_init();
+#if TOUCH_FILTER_MODE_EN
+    touch_pad_filter_start(TOUCHPAD_FILTER_TOUCH_PERIOD);
+#endif
+    // Iniciar a tarefa para ler valores dos pads de toque
+    xTaskCreate(&tp_seatbelt, "touch_pad_read_task", 2048, NULL, 5, NULL);
+
+    // Iniciar a tarefa para verificar o cinto de segurança a cada 1 segundo
+    xTaskCreate(&seatbelt_check_task, "seatbelt_check_task", 2048, NULL, 5, NULL);
+}
