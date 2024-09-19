@@ -1,0 +1,67 @@
+<cyclic executive>
+ABS response time (ms)
+86.18
+86.18
+86.18
+
+Airbag  response time (ms)
+96.16
+96.16
+96.16
+
+Seat Belt  response time (ms)
+999.75
+999.75
+999.75
+
+Injection response time (us)
+590
+590
+590
+
+<interruptive loop>
+ABS response time (ms)
+86.16
+86.17
+86.15
+
+Airbag  response time (ms)
+96.17
+96.17
+96.17
+
+Seat Belt  response time (ms)
+999.73
+999.73
+999.73
+
+Injection response time (us)
+100
+100
+100
+
+<microkernel>
+ABS response time (ms)
+99.00
+99.01
+99.01
+
+Airbag  response time (ms)
+96.16
+96.16
+96.16
+
+Seat Belt  response time (ms)
+999.75
+999.75
+999.75
+
+Injection [delay 500us]  response time (us)
+590
+590
+590
+
+Injection [delay 400us] response time (us)
+490
+490
+490
